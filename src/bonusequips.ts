@@ -21,7 +21,7 @@ const bestAdventuresFromPants =
     .sort((a, b) => b - a)[0] || 0;
 
 const haveSomeCheese = getFoldGroup($item`stinky cheese diaper`).some((item) => have(item));
-export function cheeses(): Map<Item, number> {
+function cheeses(): Map<Item, number> {
   return haveSomeCheese &&
     !globalOptions.ascending &&
     get("_stinkyCheeseCount") < 100 &&
@@ -36,19 +36,19 @@ export function cheeses(): Map<Item, number> {
       )
     : new Map<Item, number>();
 }
+
 function snowSuit() {
   // Ignore for EMBEZZLER
   // Ignore for DMT, assuming mafia might get confused about the drop by the weird combats
   if (!have($item`Snow Suit`) || get("_carrotNoseDrops") >= 3) return new Map<Item, number>([]);
-
   return new Map<Item, number>([[$item`Snow Suit`, getSaleValue($item`carrot nose`) / 10]]);
 }
+
 function mayflowerBouquet() {
   // Drops flowers 50% of the time, wiki says 5-10 a day.
   // Theorized that flower drop rate drops off but no info on wiki.
   // During testing I got 4 drops then the 5th took like 40 more adventures
   // so let's just assume rate drops by 11% with a min of 1% ¯\_(ツ)_/¯
-
   const averageFlowerValue =
     getSaleValue(
       ...$items`tin magnolia, upsy daisy, lesser grodulated violet, half-orchid, begpwnia`
@@ -57,23 +57,8 @@ function mayflowerBouquet() {
     [$item`Mayflower bouquet`, get("_mayflowerDrops") < 10 ? averageFlowerValue : 0],
   ]);
 }
-export function dropsItems(isFree = false): Map<Item, number> {
-  return new Map<Item, number>([
-    [$item`mafia thumb ring`, !isFree ? 300 : 0],
-    [$item`lucky gold ring`, 400],
-    [$item`Mr. Cheeng's spectacles`, 250],
-    [$item`pantogram pants`, get("_pantogramModifier").includes("Drops Items") ? 100 : 0],
-    [$item`Mr. Screege's spectacles`, 180],
-    [
-      $item`bag of many confections`,
-      getSaleValue(...$items`Polka Pop, BitterSweetTarts, Piddles`) / 6,
-    ],
-    ...snowSuit(),
-    ...mayflowerBouquet(),
-  ]);
-}
 
-export function pantsgiving(): Map<Item, number> {
+function pantsgiving(): Map<Item, number> {
   if (!have($item`Pantsgiving`)) return new Map<Item, number>();
   const count = get("_pantsgivingCount");
   const turnArray = [5, 50, 500, 5000];
@@ -94,3 +79,22 @@ export function pantsgiving(): Map<Item, number> {
   const pantsgivingBonus = fullnessValue / (turns * 0.9);
   return new Map<Item, number>([[$item`Pantsgiving`, pantsgivingBonus]]);
 }
+
+export function dropsItems(isFree = false): Map<Item, number> {
+  return new Map<Item, number>([
+    [$item`mafia thumb ring`, !isFree ? 300 : 0],
+    [$item`lucky gold ring`, 400],
+    [$item`Mr. Cheeng's spectacles`, 250],
+    [$item`pantogram pants`, get("_pantogramModifier").includes("Drops Items") ? 100 : 0],
+    [$item`Mr. Screege's spectacles`, 180],
+    [
+      $item`bag of many confections`,
+      getSaleValue(...$items`Polka Pop, BitterSweetTarts, Piddles`) / 6,
+    ],
+    ...snowSuit(),
+    ...mayflowerBouquet(),
+    ...pantsgiving(),
+    ...cheeses()
+  ]);
+}
+
