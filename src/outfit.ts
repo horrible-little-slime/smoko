@@ -44,6 +44,7 @@ export function smokeMonsterOutfit(requirements: Requirement[] = []): void {
       bjornalikeToUse === $item`Buddy Bjorn` ? $item`Crown of Thrones` : $item`Buddy Bjorn`,
     ],
   });
+
   Requirement.merge([
     compiledRequirements,
     baseSmokeMonsterRequirement,
