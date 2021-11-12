@@ -9,6 +9,7 @@ import {
   $skills,
   clamp,
   get,
+  SongBoom,
   SourceTerminal,
   StrictMacro,
 } from "libram";
@@ -58,11 +59,16 @@ export default class Macro extends StrictMacro {
   }
 
   kill(): Macro {
-    return this.skill(...$skills`Curse of Weaksauce, Micrometeorite`).externalIf(
-      myClass() === $class`Sauceror`,
-      Macro.skill($skill`Saucegeyser`).repeat(),
-      Macro.attack().repeat()
-    );
+    return this.skill(...$skills`Curse of Weaksauce, Micrometeorite`)
+      .externalIf(
+        SongBoom.have() && SongBoom.song() === "Total Eclipse of Your Meat",
+        Macro.skill($skill`Sing Along`)
+      )
+      .externalIf(
+        myClass() === $class`Sauceror`,
+        Macro.skill($skill`Saucegeyser`).repeat(),
+        Macro.attack().repeat()
+      );
   }
   static kill(): Macro {
     return new Macro().kill();
