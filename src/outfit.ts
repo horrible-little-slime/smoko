@@ -64,9 +64,49 @@ export function smokeMonsterOutfit(...requirements: Requirement[]): void {
   ]).maximize();
 }
 
-export function freeFightOutfit(...requirements: Requirement[]): void {}
+export function freeFightOutfit(...requirements: Requirement[]): void {
+  const compiledRequirements = Requirement.merge(requirements);
+  const bjornChoice = CrownOfThrones.pickRider("free");
+  const bjornalikeToUse = compiledRequirements.maximizeOptions.forceEquip?.some(
+    (equipment) => toSlot(equipment) === $slot`back`
+  )
+    ? $item`Crown of Thrones`
+    : $item`Buddy Bjorn`;
+  const bjornalikeRequirement = new Requirement([], {
+    bonusEquip: new Map<Item, number>([
+      [bjornalikeToUse, bjornChoice ? bjornChoice.meatVal() * bjornChoice.probability : 0],
+    ]),
+    preventEquip: [
+      bjornalikeToUse === $item`Buddy Bjorn` ? $item`Crown of Thrones` : $item`Buddy Bjorn`,
+    ],
+  });
+  const bonusDrops = new Requirement([], { bonusEquip: dropsItems(true) });
+  const allRequirements = Requirement.merge([
+    compiledRequirements,
+    bjornalikeRequirement,
+    bonusDrops,
+  ]);
+  if (allRequirements.maximizeParameters.length === 0) {
+    Requirement.merge([allRequirements, new Requirement(["Familiar Weight"], {})]).maximize();
+  } else {
+    allRequirements.maximize();
+  }
+}
 
 export function embezzlerOutfit(...requirements: Requirement[]): void {
   const compiledRequirements = Requirement.merge(requirements);
   const bjornChoice = CrownOfThrones.pickRider("embezzler");
+  const bjornalikeToUse = compiledRequirements.maximizeOptions.forceEquip?.some(
+    (equipment) => toSlot(equipment) === $slot`back`
+  )
+    ? $item`Crown of Thrones`
+    : $item`Buddy Bjorn`;
+  const bjornalikeRequirement = new Requirement([], {
+    bonusEquip: new Map<Item, number>([
+      [bjornalikeToUse, bjornChoice ? bjornChoice.meatVal() * bjornChoice.probability : 0],
+    ]),
+    preventEquip: [
+      bjornalikeToUse === $item`Buddy Bjorn` ? $item`Crown of Thrones` : $item`Buddy Bjorn`,
+    ],
+  });
 }
