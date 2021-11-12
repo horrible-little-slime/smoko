@@ -13,12 +13,14 @@ import {
 } from "kolmafia";
 import {
   $coinmaster,
+  $familiar,
   $item,
   $monster,
   get,
   getAverageAdventures,
   getSaleValue,
   have,
+  PropertiesManager,
 } from "libram";
 
 export const globalOptions: {
@@ -33,6 +35,8 @@ export const globalOptions: {
   cachedPantsgivingFood: null,
 };
 
+export const propertyManager = new PropertiesManager();
+
 export function estimatedTurns(): number {
   if (globalOptions.stopTurncount) return globalOptions.stopTurncount - myTurncount();
   // Assume roughly 2 fullness from pantsgiving and 8 adventures/fullness.
@@ -46,10 +50,12 @@ export function estimatedTurns(): number {
     : 0;
   const nightcapAdventures = globalOptions.ascending && myInebriety() <= inebrietyLimit() ? 60 : 0;
   const thumbRingMultiplier = have($item`mafia thumb ring`) ? 1 / 0.96 : 1;
+  const gnomeMultiplier = have($familiar`Reagnimated Gnome`) ? 1.1 : 1;
 
   return (
     (myAdventures() + sausageAdventures + pantsgivingAdventures + nightcapAdventures) *
-    thumbRingMultiplier
+    thumbRingMultiplier *
+    gnomeMultiplier
   );
 }
 

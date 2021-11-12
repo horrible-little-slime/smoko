@@ -27,7 +27,7 @@ CrownOfThrones.createRiderMode("embezzler", (modifiers: Modifiers) => {
   return (1025 * (lepBonus + meat)) / 100;
 });
 
-export function smokeMonsterOutfit(requirements: Requirement[] = []): void {
+export function smokeMonsterOutfit(...requirements: Requirement[]): void {
   const compiledRequirements = Requirement.merge(requirements);
   const runItem = $items`Greatest American Pants, navel ring of navel gazing`.find((item) =>
     have(item)
@@ -64,6 +64,9 @@ export function smokeMonsterOutfit(requirements: Requirement[] = []): void {
   ]).maximize();
 }
 
-export function freeFightOutfit(): void {}
+export function freeFightOutfit(...requirements: Requirement[]): void {}
 
-export function embezzlerOutfit(): void {}
+export function embezzlerOutfit(...requirements: Requirement[]): void {
+  const compiledRequirements = Requirement.merge(requirements);
+  const bjornChoice = CrownOfThrones.pickRider("embezzler");
+}
