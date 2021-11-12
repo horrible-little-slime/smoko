@@ -6,6 +6,7 @@ import {
   CrownOfThrones,
   findLeprechaunMultiplier,
   get,
+  getSaleValue,
   Requirement,
 } from "libram";
 import { Modifiers } from "libram/dist/modifier";
@@ -26,10 +27,13 @@ CrownOfThrones.createRiderMode("embezzler", (modifiers: Modifiers) => {
 
 export function smokeMonsterOutfit(requirements: Requirement[] = []): void {
   const compiledRequirements = Requirement.merge(requirements);
-  const baseSmokeMonsterRequirement = new Requirement(["100 item max 567"], {
-    forceEquip: $items`gnomish housemaid's kgnee`,
-    bonusEquip: dropsItems(),
-  });
+  const baseSmokeMonsterRequirement = new Requirement(
+    [`${(0.15 * getSaleValue($item`transdermal smoke patch`)) / 100} item max 567`],
+    {
+      forceEquip: $items`gnomish housemaid's kgnee`,
+      bonusEquip: dropsItems(),
+    }
+  );
   const bjornChoice = CrownOfThrones.pickRider("default");
   const bjornalikeToUse = compiledRequirements.maximizeOptions.forceEquip?.some(
     (equipment) => toSlot(equipment) === $slot`back`
