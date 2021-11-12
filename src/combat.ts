@@ -77,6 +77,10 @@ export default class Macro extends StrictMacro {
         Macro.kill()
       );
   }
+
+  static jungle(): Macro {
+    return new Macro().jungle();
+  }
 }
 
 function shouldRedigitize() {
