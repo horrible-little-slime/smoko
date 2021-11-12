@@ -1,5 +1,6 @@
-import { toSlot } from "kolmafia";
+import { myFamiliar, toSlot } from "kolmafia";
 import {
+  $familiar,
   $item,
   $items,
   $slot,
@@ -7,6 +8,7 @@ import {
   findLeprechaunMultiplier,
   get,
   getSaleValue,
+  have,
   Requirement,
 } from "libram";
 import { Modifiers } from "libram/dist/modifier";
@@ -27,10 +29,16 @@ CrownOfThrones.createRiderMode("embezzler", (modifiers: Modifiers) => {
 
 export function smokeMonsterOutfit(requirements: Requirement[] = []): void {
   const compiledRequirements = Requirement.merge(requirements);
+  const runItem = $items`Greatest American Pants, navel ring of navel gazing`.find((item) =>
+    have(item)
+  );
   const baseSmokeMonsterRequirement = new Requirement(
     [`${(0.15 * getSaleValue($item`transdermal smoke patch`)) / 100} item max 567`],
     {
-      forceEquip: $items`gnomish housemaid's kgnee`,
+      forceEquip: [
+        ...(myFamiliar() === $familiar`Reagnimated Gnome` ? $items`gnomish housemaid's kgnee` : []),
+        ...(runItem ? [runItem] : []),
+      ],
       bonusEquip: dropsItems(),
     }
   );
