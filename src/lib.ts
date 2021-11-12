@@ -1,4 +1,5 @@
 import {
+  availableAmount,
   inebrietyLimit,
   isAccessible,
   itemAmount,
@@ -10,7 +11,15 @@ import {
   runChoice,
   visitUrl,
 } from "kolmafia";
-import { $coinmaster, $item, get, getAverageAdventures, getSaleValue, have } from "libram";
+import {
+  $coinmaster,
+  $item,
+  $monster,
+  get,
+  getAverageAdventures,
+  getSaleValue,
+  have,
+} from "libram";
 
 export const globalOptions: {
   ascending: boolean;
@@ -21,7 +30,7 @@ export const globalOptions: {
   stopTurncount: null,
   ascending: false,
   saveTurns: 0,
-  cachedPantsgivingFood: null
+  cachedPantsgivingFood: null,
 };
 
 export function estimatedTurns(): number {
@@ -101,7 +110,10 @@ const valuePantsgivingFood = (foodChoice: PantsgivingFood) =>
   (foodChoice.costOverride ? foodChoice.costOverride() : mallPrice(foodChoice.food));
 export function getPantsgivingFood(): PantsgivingFood {
   if (globalOptions.cachedPantsgivingFood) {
-    if (!have(globalOptions.cachedPantsgivingFood.food) && !globalOptions.cachedPantsgivingFood.canGet()) {
+    if (
+      !have(globalOptions.cachedPantsgivingFood.food) &&
+      !globalOptions.cachedPantsgivingFood.canGet()
+    ) {
       globalOptions.cachedPantsgivingFood = null;
     }
   }
@@ -111,4 +123,30 @@ export function getPantsgivingFood(): PantsgivingFood {
       .reduce((a, b) => (valuePantsgivingFood(b) < valuePantsgivingFood(a) ? a : b));
   }
   return globalOptions.cachedPantsgivingFood;
+}
+
+const witchessPieces = [
+  { piece: $monster`Witchess Bishop`, drop: $item`Sacramento wine` },
+  { piece: $monster`Witchess Knight`, drop: $item`jumping horseradish` },
+  { piece: $monster`Witchess Pawn`, drop: $item`armored prawn` },
+  { piece: $monster`Witchess Rook`, drop: $item`Greek fire` },
+];
+
+export function bestWitchessPiece(): Monster {
+  return witchessPieces.sort((a, b) => getSaleValue(b.drop) - getSaleValue(a.drop))[0].piece;
+}
+
+let cachedCopyMonster: Monster;
+export function copyMonster(): Monster {
+  if (!cachedCopyMonster) {
+    if (
+      have($item`Kramco Sausage-o-Matic™`) &&
+      availableAmount($item`magical sausage casing`) < 420
+    ) {
+      cachedCopyMonster = $monster`sausage goblin`;
+    } else {
+      cachedCopyMonster = bestWitchessPiece();
+    }
+  }
+  return cachedCopyMonster;
 }
